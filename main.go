@@ -2,6 +2,8 @@ package main
 
 import (
 	"session-23/cmd"
+	"fmt"
+	"log"
 	"session-23/internal/data/repository"
 	"session-23/internal/wire"
 	"session-23/pkg/database"
@@ -26,15 +28,23 @@ var cartData = []Item{
 }
 
 func main() {
+	// Read configuration from .env
 	config, err := utils.ReadConfiguration()
 	if err != nil {
+		log.Fatal("Error reading configuration: ", err)
 	}
-	db, err := database.InitDB(config.DB)
+	fmt.Printf("Configuration loaded: %s\n", config.AppName)
 
+	// Initialize database connection
+	db, err := database.InitDB(config.DB)
 	if err != nil {
+		log.Fatal("Error connecting to database: ", err)
 	}
+	fmt.Println("Database connected successfully")
+
+	// Initialize repository
 	repo := repository.NewRepository(db)
-	router := wire.Wiring(repo)
+	router := wire.Wiring(repo, config)
 	cmd.APiserver(router)
 
 }

@@ -4,18 +4,37 @@ import (
 	"session-23/internal/adaptor"
 	"session-23/internal/data/repository"
 	"session-23/internal/usecase"
+	"session-23/pkg/utils"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
-func Wiring(repo repository.Repository) *chi.Mux {
+func Wiring(repo repository.Repository, config utils.Configuration) *chi.Mux {
 	router := chi.NewRouter()
-	wireCar(router, repo)
+	
+	// Middleware
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
+	
+	// Mount routes
+	router.Mount("/api/v1", ApiV1(repo, config))
+	
 	return router
 }
 
-func wireCar(router *chi.Mux, repo repository.Repository) {
+func ApiV1(repo repository.Repository, config utils.Configuration) *chi.Mux {
+	r := chi.NewRouter()
+	
+	// Wire car routes
 	useCaseCar := usecase.NewServiceCar(&repo)
-	adaptorCar := adaptor.NewAdaptorCar(useCaseCar)
-	router.Get("/dashboard", adaptorCar.Dashboard)
+	adaptorCar := adaptor.NewAdaptorCar(useCaseCar, config)
+	
+	// Car dashboard routes
+	r.Route("/cars", func(r chi.Router) {
+		r.Get("/dashboard-serial", adaptorCar.Dashboard)
+		r.Get("/dashboard-concurrent", adaptorCar.DashboardConcurrent)
+	})
+	
+	return r
 }

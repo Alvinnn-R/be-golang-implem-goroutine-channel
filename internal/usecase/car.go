@@ -11,6 +11,11 @@ import (
 	"time"
 )
 
+type UsecaseServiceCar interface {
+	DashboardSerial(ctx context.Context, limit int) (dto.DashboardResponse, error)
+	DashboardConcurrent(ctx context.Context, limit int) (dto.DashboardResponse, error)
+}
+
 type ServiceCar struct {
 	Repo repository.Repository
 }
@@ -19,20 +24,24 @@ func NewServiceCar(repo *repository.Repository) *ServiceCar {
 	return &ServiceCar{Repo: *repo}
 }
 
+// DashboardSerial - query serial
 func (s *ServiceCar) DashboardSerial(ctx context.Context, limit int) (dto.DashboardResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 
+	// Query 1: Get Latest Cars
 	cars, err := s.Repo.RepositoryCar.GetLatestCars(ctx, limit)
 	if err != nil {
 		return dto.DashboardResponse{}, fmt.Errorf("getLatestCars: %w", err)
 	}
 
+	// Query 2: Get Total Cars
 	total, err := s.Repo.RepositoryCar.GetTotalCars(ctx)
 	if err != nil {
 		return dto.DashboardResponse{}, fmt.Errorf("getTotalCars: %w", err)
 	}
 
+	// Query 3: Get Price Stats
 	stats, err := s.Repo.RepositoryCar.GetPriceStats(ctx)
 	if err != nil {
 		return dto.DashboardResponse{}, fmt.Errorf("getPriceStats: %w", err)
@@ -45,6 +54,7 @@ func (s *ServiceCar) DashboardSerial(ctx context.Context, limit int) (dto.Dashbo
 	}, nil
 }
 
+// DashboardConcurrent - query concurrent
 func (s *ServiceCar) DashboardConcurrent(ctx context.Context, limit int) (dto.DashboardResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
