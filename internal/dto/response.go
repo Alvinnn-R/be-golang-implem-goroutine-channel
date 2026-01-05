@@ -1,6 +1,6 @@
 package dto
 
-import "session-23/internal/data/entitiy"
+import "session-23/internal/data/entity"
 
 type PriceStats struct {
 	Min float64
@@ -11,11 +11,11 @@ type PriceStats struct {
 type DashboardResponse struct {
 	TotalCars int64
 	Stats     PriceStats
-	Cars      []entitiy.Car
+	Cars      []entity.Car
 }
 
 type ResultCars struct {
-	Data []entitiy.Car
+	Data []entity.Car
 	Err  error
 }
 type ResultTotal struct {

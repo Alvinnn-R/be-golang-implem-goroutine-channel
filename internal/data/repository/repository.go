@@ -1,14 +1,15 @@
 package repository
 
-import "session-23/internal/usecase"
-
+import (
+	"github.com/jackc/pgx/v5/pgxpool"
+)
 
 type Repository struct {
 	RepositoryCar *RepositoryCar
 }
 
-func NewRepository(usecase *usecase.ServiceCar) *Repository {
-	return &Repository{
-		RepositoryCar: NewRepositoryCar(usecase),
+func NewRepository(db *pgxpool.Pool) Repository {
+	return Repository{
+		RepositoryCar: NewRepositoryCar(db),
 	}
 }

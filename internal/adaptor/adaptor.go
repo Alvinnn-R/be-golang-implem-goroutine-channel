@@ -1,15 +1,18 @@
 package adaptor
 
-import "session-23/internal/usecase"
+import (
+	"net/http"
+	"session-23/internal/usecase"
+)
 
 type AdaptorCar struct {
-	usecase.ServiceCar
+	Usecase usecase.ServiceCar
 }
 
 func NewAdaptorCar(usecase *usecase.ServiceCar) *AdaptorCar {
-	return &AdaptorCar{ServiceCar: *usecase}
+	return &AdaptorCar{Usecase: *usecase}
 }
 
-func (a *AdaptorCar) Service() *usecase.ServiceCar {
-	return &a.ServiceCar
+func (usecaseAdaptor *AdaptorCar) Dashboard(w http.ResponseWriter, r *http.Request) {
+
 }
