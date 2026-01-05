@@ -1,7 +1,11 @@
 package main
 
 import (
-	"fmt"
+	"session-23/cmd"
+	"session-23/internal/data/repository"
+	"session-23/internal/wire"
+	"session-23/pkg/database"
+	"session-23/pkg/utils"
 	"time"
 )
 
@@ -22,11 +26,16 @@ var cartData = []Item{
 }
 
 func main() {
-	CalculateTotalItem(cartData)
+	config, err := utils.ReadConfiguration()
+	if err != nil {
+	}
+	db, err := database.InitDB(config.DB)
 
-	CalculateTotalItemConcurrent(cartData)
-
-	fmt.Println()
+	if err != nil {
+	}
+	repo := repository.NewRepository(db)
+	router := wire.Wiring(repo)
+	cmd.APiserver(router)
 
 }
 

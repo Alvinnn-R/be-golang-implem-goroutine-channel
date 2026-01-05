@@ -1,20 +1,21 @@
-package service
+package usecase
 
 import (
 	"context"
 	"fmt"
 	"session-23/internal/data/entity"
 	"session-23/internal/data/repository"
+
 	"session-23/internal/dto"
 
 	"time"
 )
 
 type ServiceCar struct {
-	Repo repository.RepositoryCar
+	Repo repository.Repository
 }
 
-func NewServiceCar(repo *repository.RepositoryCar) *ServiceCar {
+func NewServiceCar(repo *repository.Repository) *ServiceCar {
 	return &ServiceCar{Repo: *repo}
 }
 
@@ -22,17 +23,17 @@ func (s *ServiceCar) DashboardSerial(ctx context.Context, limit int) (dto.Dashbo
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 
-	cars, err := s.Repo.GetLatestCars(ctx, limit)
+	cars, err := s.Repo.RepositoryCar.GetLatestCars(ctx, limit)
 	if err != nil {
 		return dto.DashboardResponse{}, fmt.Errorf("getLatestCars: %w", err)
 	}
 
-	total, err := s.Repo.GetTotalCars(ctx)
+	total, err := s.Repo.RepositoryCar.GetTotalCars(ctx)
 	if err != nil {
 		return dto.DashboardResponse{}, fmt.Errorf("getTotalCars: %w", err)
 	}
 
-	stats, err := s.Repo.GetPriceStats(ctx)
+	stats, err := s.Repo.RepositoryCar.GetPriceStats(ctx)
 	if err != nil {
 		return dto.DashboardResponse{}, fmt.Errorf("getPriceStats: %w", err)
 	}
@@ -54,15 +55,15 @@ func (s *ServiceCar) DashboardConcurrent(ctx context.Context, limit int) (dto.Da
 
 	// 3 query jalan bareng
 	go func() {
-		cars, err := s.Repo.GetLatestCars(ctx, limit)
+		cars, err := s.Repo.RepositoryCar.GetLatestCars(ctx, limit)
 		carsCh <- dto.ResultCars{Data: cars, Err: err}
 	}()
 	go func() {
-		total, err := s.Repo.GetTotalCars(ctx)
+		total, err := s.Repo.RepositoryCar.GetTotalCars(ctx)
 		totalCh <- dto.ResultTotal{Data: total, Err: err}
 	}()
 	go func() {
-		stats, err := s.Repo.GetPriceStats(ctx)
+		stats, err := s.Repo.RepositoryCar.GetPriceStats(ctx)
 		statsCh <- dto.ResultStats{Data: stats, Err: err}
 	}()
 

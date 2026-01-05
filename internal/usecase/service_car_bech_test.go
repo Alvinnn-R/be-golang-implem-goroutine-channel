@@ -1,4 +1,4 @@
-package service
+package usecase
 
 import (
 	"context"
@@ -28,8 +28,8 @@ func TestMain(m *testing.M) {
 	}
 	defer pool.Close()
 
-	repo := repository.NewRepositoryCar(pool)
-	svc = NewServiceCar(repo)
+	repo := repository.NewRepository(pool)
+	svc = NewServiceCar(&repo)
 	os.Exit(m.Run())
 }
 

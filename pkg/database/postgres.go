@@ -3,7 +3,8 @@ package database
 import (
 	"context"
 	"fmt"
-	"session-23/utils"
+	"session-23/pkg/utils"
+
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
