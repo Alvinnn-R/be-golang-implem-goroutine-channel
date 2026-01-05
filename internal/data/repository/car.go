@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"session-23/dto"
-	"session-23/model"
+	"session-23/internal/data/entity"
+	"session-23/internal/dto"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -16,7 +16,7 @@ func NewRepositoryCar(db *pgxpool.Pool) *RepositoryCar {
 	return &RepositoryCar{db: db}
 }
 
-func (s *RepositoryCar) GetLatestCars(ctx context.Context, limit int) ([]model.Car, error) {
+func (s *RepositoryCar) GetLatestCars(ctx context.Context, limit int) ([]entity.Car, error) {
 	const q = `
 		SELECT id, brand, model, year, price, mileage, color, condition, first_name, last_name, address, country
 		FROM cars
@@ -30,9 +30,9 @@ func (s *RepositoryCar) GetLatestCars(ctx context.Context, limit int) ([]model.C
 	}
 	defer rows.Close()
 
-	out := make([]model.Car, 0, limit)
+	out := make([]entity.Car, 0, limit)
 	for rows.Next() {
-		var c model.Car
+		var c entity.Car
 		if err := rows.Scan(
 			&c.ID, &c.Brand, &c.Model, &c.Year, &c.Price, &c.Mileage, &c.Color, &c.Condition,
 			&c.FirstName, &c.LastName, &c.Address, &c.Country,

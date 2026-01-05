@@ -3,9 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
-	"session-23/dto"
-	"session-23/model"
-	"session-23/repository"
+	"session-23/internal/data/entity"
+	"session-23/internal/data/repository"
+	"session-23/internal/dto"
+
 	"time"
 )
 
@@ -66,7 +67,7 @@ func (s *ServiceCar) DashboardConcurrent(ctx context.Context, limit int) (dto.Da
 	}()
 
 	var (
-		cars  []model.Car
+		cars  []entity.Car
 		total int64
 		stats dto.PriceStats
 	)
