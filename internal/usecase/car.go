@@ -24,7 +24,7 @@ func NewServiceCar(repo *repository.Repository) *ServiceCar {
 	return &ServiceCar{Repo: *repo}
 }
 
-// DashboardSerial - query serial
+// DashboardSerial - execute queries sequentially
 func (s *ServiceCar) DashboardSerial(ctx context.Context, limit int) (dto.DashboardResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
@@ -54,7 +54,7 @@ func (s *ServiceCar) DashboardSerial(ctx context.Context, limit int) (dto.Dashbo
 	}, nil
 }
 
-// DashboardConcurrent - query concurrent
+// DashboardConcurrent - execute queries concurrently using goroutines
 func (s *ServiceCar) DashboardConcurrent(ctx context.Context, limit int) (dto.DashboardResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
@@ -63,7 +63,7 @@ func (s *ServiceCar) DashboardConcurrent(ctx context.Context, limit int) (dto.Da
 	totalCh := make(chan dto.ResultTotal)
 	statsCh := make(chan dto.ResultStats)
 
-	// 3 query jalan bareng
+	// Run 3 queries concurrently
 	go func() {
 		cars, err := s.Repo.RepositoryCar.GetLatestCars(ctx, limit)
 		carsCh <- dto.ResultCars{Data: cars, Err: err}

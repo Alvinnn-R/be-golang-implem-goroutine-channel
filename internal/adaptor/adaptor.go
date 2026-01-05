@@ -16,7 +16,7 @@ func NewAdaptorCar(usecase *usecase.ServiceCar, config utils.Configuration) *Ada
 }
 
 func (usecaseAdaptor *AdaptorCar) Dashboard(w http.ResponseWriter, r *http.Request) {
-	// config limit dari query parameter atau default dari config
+	// Get limit from config
 	limit := usecaseAdaptor.Config.Limit
 
 	// Get data from usecase with context
@@ -30,7 +30,7 @@ func (usecaseAdaptor *AdaptorCar) Dashboard(w http.ResponseWriter, r *http.Reque
 }
 
 func (usecaseAdaptor *AdaptorCar) DashboardConcurrent(w http.ResponseWriter, r *http.Request) {
-	// config limit dari query parameter atau default dari config
+	// Get limit from config
 	limit := usecaseAdaptor.Config.Limit
 
 	// Get data from usecase with context using concurrent queries

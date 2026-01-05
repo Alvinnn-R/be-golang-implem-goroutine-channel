@@ -1,9 +1,9 @@
 package main
 
 import (
-	"session-23/cmd"
 	"fmt"
 	"log"
+	"session-23/cmd"
 	"session-23/internal/data/repository"
 	"session-23/internal/wire"
 	"session-23/pkg/database"
@@ -35,6 +35,14 @@ func main() {
 	}
 	fmt.Printf("Configuration loaded: %s\n", config.AppName)
 
+	// Initialize logger
+	logger, err := utils.InitLogger(config.PathLogging, config.Debug)
+	if err != nil {
+		log.Fatal("Error initializing logger: ", err)
+	}
+	defer logger.Sync()
+	fmt.Println("Logger initialized")
+
 	// Initialize database connection
 	db, err := database.InitDB(config.DB)
 	if err != nil {
@@ -44,7 +52,7 @@ func main() {
 
 	// Initialize repository
 	repo := repository.NewRepository(db)
-	router := wire.Wiring(repo, config)
+	router := wire.Wiring(repo, config, logger)
 	cmd.APiserver(router)
 
 }
